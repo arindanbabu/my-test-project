@@ -1,20 +1,29 @@
-name: CI/CD Node.js local simulation
+name: Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  build-and-test:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Use Node.js
-        uses: actions/setup-node@v3
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          node-version: 18
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/testapp/my-test-project
 
-      - run: npm install
-      - run: node index
-      - run: echo "Deployment simulated. Run 'node index.js' locally to start server."
+            echo "Pull latest code"
+            git pull origin main
+
+            echo "Install backend deps"
+            npm install
+
+            echo "Restart app"
+            pm2 restart myapp-api || pm2 start index.js --name myapp-api
