@@ -7,6 +7,9 @@ app.get("/", (req, res) => {
 app.get("/home", (req, res) => {
   res.send("This is home route of the repo deployed VIA CI CD");
 });
+app.get("/menu", (req, res) => {
+  res.send("This is menu route of the repo deployed VIA CI CD");
+});
 app.listen(3000, "0.0.0.0", () => {
   console.log("Server running on port 3000");
 });
