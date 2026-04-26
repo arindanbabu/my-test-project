@@ -1,29 +1,49 @@
-name: Deploy
+name: Production Deployment
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to KVM Server
+        uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/testapp/my-test-project
+            echo "--- Checking directory structure ---"
+            ls -al ~/testapp/my-test-project || echo "Directory not found!"
+            
+            cd ~/testapp/my-test-project || exit 1
+            
+            echo "--- Pulling from Git ---"
+            git pull origin main || { echo "Git pull failed! Check safe.directory or credentials"; exit 1; }
 
-            echo "Pull latest code"
-            git pull origin main
-
-            echo "Install backend deps"
+            echo "--- Updating Backend ---"
+            cd backend || exit 1
+            npm install --production
+            
+            # Use full path for PM2 if 'command not found' appears
+            export PATH=$PATH:$(npm config get prefix)/bin
+            pm2 restart all || pm2 start index.js --name "auth-api"
+            pm2 save
+            
+            echo "--- Updating Frontend ---"
+            cd ../client || exit 1
             npm install
-
-            echo "Restart app"
-            pm2 restart myapp-api || pm2 start index.js --name myapp-api
+            npm run build
+            
+            echo "--- Syncing with Nginx ---"
+            # Using sudo -n ensures it fails immediately if a password is required
+            sudo -n rm -rf /var/www/html/*
+            sudo -n cp -r build/* /var/www/html/
+            sudo -n systemctl reload nginx
+            
+            echo "--- DEPLOYMENT FINISHED SUCCESSFULLY ---"
