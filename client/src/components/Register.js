@@ -54,7 +54,7 @@ const Register = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
             <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
-                <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Create Account</h2>
+                <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Create Account Component</h2>
                 
                 {error && (
                     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4 text-sm">
