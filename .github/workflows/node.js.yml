@@ -1,0 +1,29 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/testapp/my-test-project
+
+            echo "Pull latest code"
+            git pull origin main
+
+            echo "Install backend deps"
+            npm install
+
+            echo "Restart app"
+            pm2 restart myapp-api || pm2 start index.js --name myapp-api
