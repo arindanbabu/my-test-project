@@ -1,4 +1,4 @@
-name: Production Deployment
+name: Full Stack Production Deployment
 
 on:
   push:
@@ -7,9 +7,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # UNCOMMENT the line below ONLY if your secrets are inside an "Environment"
-    # environment: production 
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -21,11 +18,36 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          # This timeout helps catch connection issues early
-          timeout: 40s
           script: |
-            echo "Successfully connected!"
-            cd ~/testapp/my-test-project/backend || exit 1
+            echo "--- Starting Full Deployment ---"
+            
+            # Navigate to the root folder
+            cd ~/testapp/my-test-project || { echo "Project root not found"; exit 1; }
+            
+            # 1. Pull latest code
             git pull origin main
+
+            # 2. Deploy Backend
+            echo "Updating Backend..."
+            cd backend
             npm install --production
             pm2 restart all || pm2 start index.js --name "auth-api"
+            cd ..
+
+            # 3. Deploy Frontend (Client)
+            echo "Updating Frontend..."
+            cd client
+            npm install
+            # This creates the 'build' folder
+            npm run build 
+            
+            # 4. Move Build to Nginx Root
+            # Note: We use sudo. Ensure your user has NOPASSWD rights for these commands.
+            echo "Moving files to Nginx web root..."
+            sudo rm -rf /var/www/html/*
+            sudo cp -r build/* /var/www/html/
+            
+            # 5. Reload Nginx
+            sudo systemctl reload nginx
+            
+            echo "--- Full Stack Deployment Finished Successfully ---"
