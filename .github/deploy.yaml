@@ -1,20 +1,47 @@
-name: CI/CD Node.js local simulation
+name: Production Deployment
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Use Node.js
-        uses: actions/setup-node@v3
+      - name: Deploy to KVM Server
+        uses: appleboy/ssh-action@master
         with:
-          node-version: 20
-
-      - run: npm install
-      - run: npm test
-      - run: echo "Deployment to simulated. Run 'node index.js' locally to start server."
+          # These now match your screenshot exactly
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            echo "Successfully connected as ${{ secrets.USER }}!"
+            
+            # Navigate to project
+            cd ~/testapp/my-test-project || { echo "Directory not found"; exit 1; }
+            
+            # 1. Pull changes
+            git pull origin main
+            
+            # 2. Update Backend
+            cd backend
+            npm install --production
+            pm2 restart all || pm2 start index.js --name "auth-api"
+            
+            # 3. Update Frontend
+            cd ../client
+            npm install
+            npm run build
+            
+            # 4. Sync with Nginx
+            # Ensure the user 'ubuntu' has NOPASSWD rights in /etc/sudoers
+            sudo rm -rf /var/www/html/*
+            sudo cp -r build/* /var/www/html/
+            sudo systemctl reload nginx
+            
+            echo "Deployment to 103.87.48.177 finished successfully!"
