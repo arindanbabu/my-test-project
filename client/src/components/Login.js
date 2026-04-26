@@ -23,7 +23,7 @@ const Login = () => {
 
     return (
         <div>
-            <h2>Login</h2>
+            <h2>Login Component</h2>
             <form onSubmit={handleSubmit}>
                 <input type="email" placeholder="Email" onChange={(e) => setFormData({...formData, email: e.target.value})} required /><br/>
                 <input type="password" placeholder="Password" onChange={(e) => setFormData({...formData, password: e.target.value})} required /><br/>
