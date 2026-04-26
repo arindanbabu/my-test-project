@@ -18,23 +18,32 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # 1. Update Backend
-            cd ~/testapp/my-test-project/backend
-            git pull origin main
+            echo "--- Checking directory structure ---"
+            ls -al ~/testapp/my-test-project || echo "Directory not found!"
+            
+            cd ~/testapp/my-test-project || exit 1
+            
+            echo "--- Pulling from Git ---"
+            git pull origin main || { echo "Git pull failed! Check safe.directory or credentials"; exit 1; }
+
+            echo "--- Updating Backend ---"
+            cd backend || exit 1
             npm install --production
+            
+            # Use full path for PM2 if 'command not found' appears
+            export PATH=$PATH:$(npm config get prefix)/bin
             pm2 restart all || pm2 start index.js --name "auth-api"
             pm2 save
-
-            # 2. Update Frontend
-            cd ~/testapp/my-test-project/client
-            git pull origin main
+            
+            echo "--- Updating Frontend ---"
+            cd ../client || exit 1
             npm install
             npm run build
             
-            # 3. Move Build files to Nginx public folder
-            # Replace /var/www/your-site with your actual Nginx root
-            sudo rm -rf /var/www/html/*
-            sudo cp -r build/* /var/www/html/
+            echo "--- Syncing with Nginx ---"
+            # Using sudo -n ensures it fails immediately if a password is required
+            sudo -n rm -rf /var/www/html/*
+            sudo -n cp -r build/* /var/www/html/
+            sudo -n systemctl reload nginx
             
-            # 4. Final Nginx reload
-            sudo systemctl reload nginx
+            echo "--- DEPLOYMENT FINISHED SUCCESSFULLY ---"
