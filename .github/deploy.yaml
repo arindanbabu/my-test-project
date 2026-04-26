@@ -7,6 +7,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # UNCOMMENT the line below ONLY if your secrets are inside an "Environment"
+    # environment: production 
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -14,37 +17,15 @@ jobs:
       - name: Deploy to KVM Server
         uses: appleboy/ssh-action@master
         with:
-          # These MUST match the names in your GitHub Secrets exactly
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
+          # This timeout helps catch connection issues early
+          timeout: 40s
           script: |
-            echo "--- Successfully connected to the server ---"
-            
-            # 1. Navigate to your project directory
-            cd ~/testapp/my-test-project || { echo "Directory not found"; exit 1; }
-            
-            # 2. Update code from GitHub
+            echo "Successfully connected!"
+            cd ~/testapp/my-test-project/backend || exit 1
             git pull origin main
-            
-            # 3. Update Backend
-            cd backend
             npm install --production
             pm2 restart all || pm2 start index.js --name "auth-api"
-            pm2 save
-            
-            # 4. Update Frontend
-            cd ../client
-            npm install
-            npm run build
-            
-            # 5. Move Build to Nginx Root
-            # Note: Ensure 'ubuntu' user has permissions for /var/www/html
-            sudo rm -rf /var/www/html/*
-            sudo cp -r build/* /var/www/html/
-            
-            # 6. Reload Nginx to apply changes
-            sudo systemctl reload nginx
-            
-            echo "--- Deployment Finished! ---"
