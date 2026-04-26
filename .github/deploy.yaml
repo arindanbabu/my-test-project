@@ -1,20 +1,40 @@
-name: CI/CD Node.js local simulation
+name: Production Deployment
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Use Node.js
-        uses: actions/setup-node@v3
+      - name: Deploy to KVM Server
+        uses: appleboy/ssh-action@master
         with:
-          node-version: 18
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # 1. Update Backend
+            cd ~/testapp/my-test-project/backend
+            git pull origin main
+            npm install --production
+            pm2 restart all || pm2 start index.js --name "auth-api"
+            pm2 save
 
-      - run: npm install
-      - run: npm test
-      - run: echo "Deployment to simulated. Run 'node index.js' locally to start server."
+            # 2. Update Frontend
+            cd ~/testapp/my-test-project/client
+            git pull origin main
+            npm install
+            npm run build
+            
+            # 3. Move Build files to Nginx public folder
+            # Replace /var/www/your-site with your actual Nginx root
+            sudo rm -rf /var/www/html/*
+            sudo cp -r build/* /var/www/html/
+            
+            # 4. Final Nginx reload
+            sudo systemctl reload nginx
