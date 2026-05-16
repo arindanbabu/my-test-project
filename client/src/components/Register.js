@@ -115,7 +115,7 @@ const Register = () => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="9876543210"
+                placeholder="xxxxx xxxxx"
               />
               {errors.phone && <span className="field-error">{errors.phone}</span>}
             </label>
