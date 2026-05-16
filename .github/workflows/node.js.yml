@@ -1,4 +1,4 @@
-name: Full Stack Production Deployment
+name: Production Deployment (Dockerized)
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy to KVM Server
+      - name: Deploy to KVM Server via Docker
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -19,35 +19,23 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            echo "--- Starting Full Deployment ---"
+            echo "--- Automation Hook Triggered ---"
+            cd /home/ubuntu/testapp/my-test-project || { echo "Directory missing"; exit 1; }
             
-            # Navigate to the root folder
-            cd ~/testapp/my-test-project || { echo "Project root not found"; exit 1; }
+            echo "Killing legacy PM2 processes and port bindings..."
+            pm2 delete all 2>/dev/null || true
+            pm2 kill 2>/dev/null || true
+            sudo fuser -k 80/tcp 5000/tcp 3306/tcp 2>/dev/null || true
             
-            # 1. Pull latest code
+            echo "Syncing repository branch..."
+            git reset --hard origin/main
             git pull origin main
-
-            # 2. Deploy Backend
-            echo "Updating Backend..."
-            cd backend
-            npm install --production
-            pm2 restart all || pm2 start index.js --name "auth-api"
-            cd ..
-
-            # 3. Deploy Frontend (Client)
-            echo "Updating Frontend..."
-            cd client
-            npm install
-            # This creates the 'build' folder
-            npm run build 
             
-            # 4. Move Build to Nginx Root
-            # Note: We use sudo. Ensure your user has NOPASSWD rights for these commands.
-            echo "Moving files to Nginx web root..."
-            sudo rm -rf /var/www/html/*
-            sudo cp -r build/* /var/www/html/
+            echo "Orchestrating Container Stack..."
+            sudo docker compose down --remove-orphans
+            sudo docker compose up --build -d
             
-            # 5. Reload Nginx
-            sudo systemctl reload nginx
+            echo "Pruning system cache..."
+            sudo docker image prune -f
             
-            echo "--- Full Stack Deployment Finished Successfully ---"
+            echo "--- Automation Cycle Completed Cleanly ---"
