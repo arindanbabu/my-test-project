@@ -19,27 +19,27 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            echo "--- Linked to OVH VPS ---"
-            cd ~/testapp/my-test-project || { echo "Directory missing"; exit 1; }
+            echo "--- Automation Starting ---"
             
-            # 1. Force-kill any rogue background processes squatting on your ports
-            echo "Clearing port conflicts..."
+            # FORCE CHANGE: Use the absolute path from Step 1 here
+            cd /home/ubuntu/testapp/my-test-project || { echo "Directory missing"; exit 1; }
+            
+            echo "Clearing rogue background processes..."
             sudo fuser -k 80/tcp 2>/dev/null || true
             sudo fuser -k 5000/tcp 2>/dev/null || true
             sudo fuser -k 3306/tcp 2>/dev/null || true
             
-            # 2. Pull the clean Docker updates from GitHub
+            echo "Pulling latest code from main branch..."
+            git reset --hard origin/main
             git pull origin main
             
-            # 3. Safely stop existing containers
-            echo "Stopping old containers..."
-            docker compose down --remove-orphans
+            echo "Stopping old docker configurations..."
+            sudo docker compose down --remove-orphans
             
-            # 4. Build and start the clean stack in the background
-            echo "Launching full stack..."
-            docker compose up --build -d
+            echo "Building and launching containers via automation..."
+            sudo docker compose up --build -d
             
-            # 5. Clean up stale dangling image cache layers
-            docker image prune -f
+            echo "Pruning dangling space..."
+            sudo docker image prune -f
             
-            echo "--- Complete Stack Dockerized Successfully! ---"
+            echo "--- Automation Complete! ---"
