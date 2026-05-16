@@ -92,7 +92,7 @@ const Register = () => {
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
-              placeholder="Rahul Sharma"
+              placeholder="Arindam Mondal"
             />
             {errors.fullName && <span className="field-error">{errors.fullName}</span>}
           </label>
