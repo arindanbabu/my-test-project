@@ -6,7 +6,10 @@ const Home = () => {
   return (
     <div className="home-shell">
       <header className="home-header">
-        <div className="home-brand">Sabji Wale</div>
+        <div className="home-brand">
+          <img src="/sabaji-wala-logo.png" alt="Sabji Wale" className="home-brand-logo" />
+          <span>Sabji Wale</span>
+        </div>
         <nav className="home-nav">
           <Link to="/login">Login</Link>
           <Link to="/signup">Sign up</Link>

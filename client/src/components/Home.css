@@ -20,6 +20,17 @@
   letter-spacing: -0.03em;
 }
 
+.home-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.home-brand-logo {
+  width: 42px;
+  height: auto;
+}
+
 .home-nav {
   display: flex;
   gap: 18px;
