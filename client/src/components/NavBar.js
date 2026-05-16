@@ -10,7 +10,6 @@ const NavBar = () => {
       <div className="store-brand">
         <Link to="/">
           <img src="/sabaji-wala-logo.png" alt="Sabji Wale" className="brand-logo" />
-          <span>Sabji Wale</span>
         </Link>
       </div>
       <nav className="store-links">

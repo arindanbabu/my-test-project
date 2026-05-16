@@ -8,7 +8,6 @@ const Home = () => {
       <header className="home-header">
         <div className="home-brand">
           <img src="/sabaji-wala-logo.png" alt="Sabji Wale" className="home-brand-logo" />
-          <span>Sabji Wale</span>
         </div>
         <nav className="home-nav">
           <Link to="/login">Login</Link>
