@@ -19,27 +19,23 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            echo "--- Automation Starting ---"
-            
-            # FORCE CHANGE: Use the absolute path from Step 1 here
+            echo "--- Automation Hook Triggered ---"
             cd /home/ubuntu/testapp/my-test-project || { echo "Directory missing"; exit 1; }
             
-            echo "Clearing rogue background processes..."
-            sudo fuser -k 80/tcp 2>/dev/null || true
-            sudo fuser -k 5000/tcp 2>/dev/null || true
-            sudo fuser -k 3306/tcp 2>/dev/null || true
+            echo "Killing legacy PM2 processes and port bindings..."
+            pm2 delete all 2>/dev/null || true
+            pm2 kill 2>/dev/null || true
+            sudo fuser -k 80/tcp 5000/tcp 3306/tcp 2>/dev/null || true
             
-            echo "Pulling latest code from main branch..."
+            echo "Syncing repository branch..."
             git reset --hard origin/main
             git pull origin main
             
-            echo "Stopping old docker configurations..."
+            echo "Orchestrating Container Stack..."
             sudo docker compose down --remove-orphans
-            
-            echo "Building and launching containers via automation..."
             sudo docker compose up --build -d
             
-            echo "Pruning dangling space..."
+            echo "Pruning system cache..."
             sudo docker image prune -f
             
-            echo "--- Automation Complete! ---"
+            echo "--- Automation Cycle Completed Cleanly ---"
