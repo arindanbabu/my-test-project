@@ -13,6 +13,7 @@ const NavBar = () => {
       <nav className="store-links">
         <Link to="/products">Products</Link>
         <Link to="/gallery">Gallery</Link>
+        <Link to="/contact">Contact</Link>
         <Link to="/cart">Cart{totalItems ? ` (${totalItems})` : ''}</Link>
         <Link to="/login">Login</Link>
         <Link to="/signup">Sign up</Link>

@@ -11,6 +11,7 @@ import Gallery from './pages/Gallery';
 import Checkout from './pages/Checkout';
 import Payment from './pages/Payment';
 import OrderSuccess from './pages/OrderSuccess';
+import ContactUs from './pages/ContactUs';
 
 function App() {
     return (
@@ -53,6 +54,11 @@ function App() {
                 <Route path="/success" element={
                     <StoreLayout>
                         <OrderSuccess />
+                    </StoreLayout>
+                } />
+                <Route path="/contact" element={
+                    <StoreLayout>
+                        <ContactUs />
                     </StoreLayout>
                 } />
                 <Route path="/dashboard" element={

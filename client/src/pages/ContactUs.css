@@ -1,0 +1,148 @@
+.contact-page {
+  padding: 40px 24px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.contact-shell {
+  display: grid;
+  gap: 30px;
+}
+
+.contact-header .eyebrow {
+  color: #2563eb;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  margin-bottom: 12px;
+}
+
+.contact-header h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 3vw, 3.4rem);
+  color: #111827;
+}
+
+.contact-header p {
+  color: #475569;
+  max-width: 660px;
+  line-height: 1.8;
+}
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 26px;
+}
+
+.contact-info-card,
+.contact-form-card {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.08);
+}
+
+.contact-info-card h2,
+.contact-form-card h2 {
+  margin: 0 0 18px;
+  font-size: 1.5rem;
+  color: #111827;
+}
+
+.contact-info-card p {
+  color: #475569;
+  margin: 0 0 24px;
+}
+
+.info-row {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.info-row span {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.info-row strong {
+  color: #111827;
+}
+
+.contact-form {
+  display: grid;
+  gap: 18px;
+}
+
+label {
+  display: grid;
+  gap: 10px;
+  color: #334155;
+  font-size: 0.95rem;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 16px;
+  background: #f8fafc;
+  padding: 14px 16px;
+  font-size: 0.95rem;
+  color: #0f172a;
+}
+
+textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.field-error {
+  color: #dc2626;
+  font-size: 0.85rem;
+}
+
+.primary-button {
+  width: fit-content;
+  padding: 14px 26px;
+  border-radius: 16px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.contact-success {
+  padding: 30px;
+  display: grid;
+  gap: 16px;
+  background: #ecfdf5;
+  border-radius: 24px;
+}
+
+.contact-success h2 {
+  margin: 0;
+  color: #166534;
+}
+
+.contact-success p {
+  margin: 0;
+  color: #475569;
+}
+
+@media (max-width: 900px) {
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+}
