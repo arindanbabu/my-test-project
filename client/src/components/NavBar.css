@@ -1,0 +1,45 @@
+.store-navbar {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.store-brand a {
+  color: #111827;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.store-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.store-links a {
+  color: #475569;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.store-links a:hover {
+  color: #2563eb;
+}
+
+@media (max-width: 700px) {
+  .store-navbar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .store-links {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

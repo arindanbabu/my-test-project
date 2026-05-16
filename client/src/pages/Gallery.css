@@ -1,0 +1,132 @@
+.gallery-page {
+  padding: 40px 24px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.gallery-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 32px;
+  padding: 32px;
+  border-radius: 24px;
+  background: #f8fafc;
+}
+
+.gallery-hero .eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #2563eb;
+  font-size: 0.78rem;
+  margin-bottom: 14px;
+}
+
+.gallery-hero h1 {
+  font-size: clamp(2rem, 3vw, 3rem);
+  margin: 0 0 14px;
+  color: #111827;
+}
+
+.gallery-hero p {
+  max-width: 560px;
+  color: #475569;
+  margin: 0 0 20px;
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.image-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+}
+
+.image-card img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.image-card:hover img {
+  transform: scale(1.04);
+}
+
+.image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.08) 0%, rgba(15, 23, 42, 0.62) 100%);
+  color: #ffffff;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.image-overlay p {
+  margin: 0;
+  color: #a5b4fc;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+}
+
+.image-overlay h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.image-overlay .secondary-button {
+  width: fit-content;
+  padding: 10px 16px;
+}
+
+.secondary-button,
+.primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 12px 18px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-button {
+  background: #2563eb;
+  color: white;
+}
+
+.secondary-button {
+  background: rgba(255,255,255,0.18);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+@media (max-width: 900px) {
+  .gallery-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .image-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .image-grid {
+    grid-template-columns: 1fr;
+  }
+}

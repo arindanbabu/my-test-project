@@ -1,4 +1,4 @@
-name: Production Deployment
+name: Production Deployment (Dockerized)
 
 on:
   push:
@@ -7,25 +7,34 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # UNCOMMENT the line below ONLY if your secrets are inside an "Environment"
-    # environment: production 
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy to KVM Server
+      - name: Deploy to KVM Server via Docker
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          # This timeout helps catch connection issues early
-          timeout: 40s
           script: |
-            echo "Successfully connected!"
-            cd ~/testapp/my-test-project/backend || exit 1
+            echo "--- System Link Established ---"
+            cd ~/testapp/my-test-project || { echo "Directory missing"; exit 1; }
+            
+            # 1. Pull the new Dockerfiles and app code changes
             git pull origin main
-            npm install --production
-            pm2 restart all || pm2 start index.js --name "auth-api"
+            
+            # 2. Safely tear down old builds to free up instance RAM
+            echo "Stopping active containers..."
+            docker compose down --remove-orphans
+            
+            # 3. Build the fresh code layers and mount the containers in detached mode
+            echo "Rebuilding and staging containers..."
+            docker compose up --build -d
+            
+            # 4. Clean out legacy dangling build steps to preserve host disk space
+            echo "Pruning unused image fragments..."
+            docker image prune -f
+            
+            echo "--- Automated Docker Deployment Cycle Finished Successfully ---"
