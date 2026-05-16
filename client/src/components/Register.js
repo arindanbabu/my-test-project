@@ -1,142 +1,205 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { Eye, EyeOff, User, Mail, Lock, ShieldCheck } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import './Register.css';
+
+const initialForm = {
+  fullName: '',
+  email: '',
+  phone: '',
+  password: '',
+  confirmPassword: '',
+  address: '',
+  city: '',
+  state: '',
+  pincode: ''
+};
 
 const Register = () => {
-    const [formData, setFormData] = useState({ 
-        username: '', 
-        email: '', 
-        password: '', 
-        confirmPassword: '' 
-    });
-    
-    const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState(initialForm);
+  const [errors, setErrors] = useState({});
+  const [feedback, setFeedback] = useState('');
+  const navigate = useNavigate();
 
-    // Password Validation Pattern: Min 8 chars, 1 uppercase, 1 number, 1 special char
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const validate = () => {
+    const validation = {};
+    if (!formData.fullName.trim()) validation.fullName = 'Full name is required';
+    if (!formData.email.trim()) validation.email = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) validation.email = 'Enter a valid email';
+    if (!formData.phone.trim()) validation.phone = 'Phone number is required';
+    if (!formData.password) validation.password = 'Password is required';
+    if (formData.password !== formData.confirmPassword) validation.confirmPassword = 'Passwords must match';
+    if (!formData.address.trim()) validation.address = 'Address is required';
+    if (!formData.city.trim()) validation.city = 'City is required';
+    if (!formData.state.trim()) validation.state = 'State is required';
+    if (!formData.pincode.trim()) validation.pincode = 'Pincode is required';
+    return validation;
+  };
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-        setError(''); // Clear error when user types
-    };
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: '' }));
+    setFeedback('');
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        // 1. Basic Validation
-        if (!passwordPattern.test(formData.password)) {
-            return setError("Password must be 8+ chars with Uppercase, Number, and Special Character.");
-        }
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length) {
+      setErrors(validationErrors);
+      return;
+    }
 
-        // 2. Confirm Password Check
-        if (formData.password !== formData.confirmPassword) {
-            return setError("Passwords do not match!");
-        }
+    localStorage.setItem('sabjiwalle_user', JSON.stringify({
+      name: formData.fullName,
+      email: formData.email,
+      phone: formData.phone
+    }));
+    localStorage.setItem('username', formData.fullName);
+    setFeedback('Registration complete. Redirecting to login...');
+    setTimeout(() => navigate('/login'), 900);
+  };
 
-        setLoading(true);
-        try {
-            const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/register`, {
-                username: formData.username,
-                email: formData.email,
-                password: formData.password
-            });
-            alert("Registration Successful!");
-            // Redirect logic here
-        } catch (err) {
-            setError(err.response?.data?.error || "Something went wrong");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-            <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
-                <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Create Account Dev Branch</h2>
-                
-                {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4 text-sm">
-                        {error}
-                    </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* Username */}
-                    <div className="relative">
-                        <User className="absolute left-3 top-3 text-gray-400" size={20} />
-                        <input
-                            name="username"
-                            type="text"
-                            placeholder="Username"
-                            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    {/* Email */}
-                    <div className="relative">
-                        <Mail className="absolute left-3 top-3 text-gray-400" size={20} />
-                        <input
-                            name="email"
-                            type="email"
-                            placeholder="Email Address"
-                            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    {/* Password */}
-                    <div className="relative">
-                        <Lock className="absolute left-3 top-3 text-gray-400" size={20} />
-                        <input
-                            name="password"
-                            type={showPassword ? "text" : "password"}
-                            placeholder="Password"
-                            className="w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                            onChange={handleChange}
-                            required
-                        />
-                        <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                        >
-                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                        </button>
-                    </div>
-
-                    {/* Confirm Password */}
-                    <div className="relative">
-                        <ShieldCheck className="absolute left-3 top-3 text-gray-400" size={20} />
-                        <input
-                            name="confirmPassword"
-                            type={showPassword ? "text" : "password"}
-                            placeholder="Confirm Password"
-                            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition duration-300 disabled:bg-blue-300"
-                    >
-                        {loading ? "Processing..." : "Sign Up"}
-                    </button>
-                </form>
-
-                <p className="text-center text-sm text-gray-600 mt-4">
-                    Already have an account? <a href="/login" className="text-blue-600 hover:underline">Log In</a>
-                </p>
+  return (
+    <main className="register-page">
+      <section className="register-card">
+        <div className="register-intro">
+          <span className="register-tag">Sabji Wale account</span>
+          <h1>Fresh groceries delivered with ease</h1>
+          <p>Sign up for fast delivery, exclusive offers, and a smoother shopping experience.</p>
+          <div className="register-features">
+            <div>
+              <strong>Quick checkout</strong>
+              <span>Save your address and preferences for repeat orders.</span>
             </div>
+            <div>
+              <strong>Smart order tracking</strong>
+              <span>Know when your vegetables will arrive.</span>
+            </div>
+            <div>
+              <strong>Member discounts</strong>
+              <span>Get special deals for loyal customers.</span>
+            </div>
+          </div>
         </div>
-    );
+
+        <form className="register-form" onSubmit={handleSubmit} noValidate>
+          <h2>Create your account</h2>
+
+          <label>
+            Full name
+            <input
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              placeholder="Rahul Sharma"
+            />
+            {errors.fullName && <span className="field-error">{errors.fullName}</span>}
+          </label>
+
+          <div className="field-row">
+            <label>
+              Email
+              <input
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="you@example.com"
+              />
+              {errors.email && <span className="field-error">{errors.email}</span>}
+            </label>
+            <label>
+              Phone
+              <input
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="9876543210"
+              />
+              {errors.phone && <span className="field-error">{errors.phone}</span>}
+            </label>
+          </div>
+
+          <div className="field-row">
+            <label>
+              Password
+              <input
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Enter a secure password"
+              />
+              {errors.password && <span className="field-error">{errors.password}</span>}
+            </label>
+            <label>
+              Confirm password
+              <input
+                name="confirmPassword"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="Confirm your password"
+              />
+              {errors.confirmPassword && <span className="field-error">{errors.confirmPassword}</span>}
+            </label>
+          </div>
+
+          <label>
+            Address
+            <input
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="123 MG Road, near market"
+            />
+            {errors.address && <span className="field-error">{errors.address}</span>}
+          </label>
+
+          <div className="field-row">
+            <label>
+              City
+              <input
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
+                placeholder="Delhi"
+              />
+              {errors.city && <span className="field-error">{errors.city}</span>}
+            </label>
+            <label>
+              State
+              <input
+                name="state"
+                value={formData.state}
+                onChange={handleChange}
+                placeholder="Delhi"
+              />
+              {errors.state && <span className="field-error">{errors.state}</span>}
+            </label>
+          </div>
+
+          <label>
+            Pincode
+            <input
+              name="pincode"
+              value={formData.pincode}
+              onChange={handleChange}
+              placeholder="110001"
+            />
+            {errors.pincode && <span className="field-error">{errors.pincode}</span>}
+          </label>
+
+          <button type="submit" className="submit-button">Create account</button>
+          {feedback && <p className="register-feedback">{feedback}</p>}
+          <p className="register-note">
+            Already have an account? <Link to="/login">Log in</Link>
+          </p>
+        </form>
+      </section>
+    </main>
+  );
 };
 
 export default Register;

@@ -1,0 +1,174 @@
+.payment-page {
+  padding: 40px 24px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.payment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.payment-header .eyebrow {
+  color: #2563eb;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.78rem;
+  margin-bottom: 10px;
+}
+
+.payment-header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 3vw, 2.75rem);
+  color: #111827;
+}
+
+.payment-header p {
+  margin: 10px 0 0;
+  color: #475569;
+  max-width: 520px;
+}
+
+.payment-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 0.6fr;
+  gap: 28px;
+}
+
+.payment-form,
+.payment-summary {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+}
+
+.payment-section {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.payment-section h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: #111827;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.radio-option input {
+  accent-color: #2563eb;
+}
+
+.field-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+label {
+  display: grid;
+  gap: 10px;
+  color: #334155;
+  font-size: 14px;
+}
+
+input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 16px;
+  padding: 14px 16px;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.field-error {
+  color: #dc2626;
+  font-size: 13px;
+}
+
+.primary-button {
+  width: 100%;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 16px;
+  padding: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.payment-summary .summary-card {
+  display: grid;
+  gap: 18px;
+}
+
+.summary-row,
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  color: #475569;
+  gap: 8px;
+}
+
+.summary-total {
+  font-weight: 700;
+  color: #111827;
+}
+
+.summary-note {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.payment-empty {
+  padding: 40px 24px;
+  min-height: 320px;
+  display: grid;
+  place-items: center;
+}
+
+.payment-empty-card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+}
+
+.payment-empty-card h1 {
+  margin: 0 0 16px;
+  color: #111827;
+}
+
+.payment-empty-card p {
+  margin: 0 0 22px;
+  color: #475569;
+}
+
+@media (max-width: 900px) {
+  .payment-grid {
+    grid-template-columns: 1fr;
+  }
+}

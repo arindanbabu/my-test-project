@@ -1,0 +1,93 @@
+/* Simple, focused styles for the Login component */
+.login-root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  padding: 24px;
+}
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+}
+.login-title {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+  color: #111827;
+  text-align: center;
+}
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+.input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+}
+.input-error {
+  border-color: #dc2626;
+}
+.field-error {
+  color: #b91c1c;
+  font-size: 13px;
+  margin-top: -4px;
+  margin-bottom: 6px;
+}
+.server-error {
+  color: #7f1d1d;
+  background: #fff1f2;
+  border: 1px solid #fecaca;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin: 8px 0;
+}
+.password-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.toggle-pw {
+  padding: 8px 10px;
+  background: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.toggle-pw:hover { background:#f8fafc }
+.btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+.btn:disabled { opacity: 0.7; cursor: not-allowed }
+.login-footer { margin-top: 12px; text-align:center }
+.login-footer a { color: #2563eb; text-decoration: none }
+.sr-only { position: absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0 }
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg) } }
