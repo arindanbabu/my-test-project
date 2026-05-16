@@ -8,7 +8,7 @@ const NavBar = () => {
   return (
     <header className="store-navbar">
       <div className="store-brand">
-        <Link to="/">Sabji Wale</Link>
+        <Link to="/">SabjiWale</Link>
       </div>
       <nav className="store-links">
         <Link to="/products">Products</Link>
