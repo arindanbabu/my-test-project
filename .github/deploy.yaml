@@ -19,22 +19,27 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            echo "--- System Link Established ---"
+            echo "--- Linked to OVH VPS ---"
             cd ~/testapp/my-test-project || { echo "Directory missing"; exit 1; }
             
-            # 1. Pull the new Dockerfiles and app code changes
+            # 1. Force-kill any rogue background processes squatting on your ports
+            echo "Clearing port conflicts..."
+            sudo fuser -k 80/tcp 2>/dev/null || true
+            sudo fuser -k 5000/tcp 2>/dev/null || true
+            sudo fuser -k 3306/tcp 2>/dev/null || true
+            
+            # 2. Pull the clean Docker updates from GitHub
             git pull origin main
             
-            # 2. Safely tear down old builds to free up instance RAM
-            echo "Stopping active containers..."
+            # 3. Safely stop existing containers
+            echo "Stopping old containers..."
             docker compose down --remove-orphans
             
-            # 3. Build the fresh code layers and mount the containers in detached mode
-            echo "Rebuilding and staging containers..."
+            # 4. Build and start the clean stack in the background
+            echo "Launching full stack..."
             docker compose up --build -d
             
-            # 4. Clean out legacy dangling build steps to preserve host disk space
-            echo "Pruning unused image fragments..."
+            # 5. Clean up stale dangling image cache layers
             docker image prune -f
             
-            echo "--- Automated Docker Deployment Cycle Finished Successfully ---"
+            echo "--- Complete Stack Dockerized Successfully! ---"
